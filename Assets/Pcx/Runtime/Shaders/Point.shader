@@ -5,8 +5,8 @@ Shader "Point Cloud/Point"
 {
     Properties
     {
-        _Tint("Tint", Color) = (0.5, 0.5, 0.5, 1)
-        _PointSize("Point Size", Float) = 0.05
+        _Tint("Tint", Color) = (1.0, 1.0, 1.0, 1)
+        _PointSize("Point Size", Float) = 0.1
         [Toggle] _Distance("Apply Distance", Float) = 1
     }
     SubShader
@@ -74,11 +74,9 @@ Shader "Point Cloud/Point"
                 Varyings o;
                 o.position = UnityObjectToClipPos(pos);
                 o.color = col;
-            #ifdef _DISTANCE_ON
+
                 o.psize = _PointSize / o.position.w * _ScreenParams.y;
-            #else
-                o.psize = _PointSize;
-            #endif
+         
                 UNITY_TRANSFER_FOG(o, o.position);
                 return o;
             }

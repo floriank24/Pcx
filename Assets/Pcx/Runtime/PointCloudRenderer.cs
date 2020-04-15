@@ -103,8 +103,7 @@ namespace Pcx
             }
 
             // Use the external buffer if given any.
-            var pointBuffer = sourceBuffer != null ?
-                sourceBuffer : _sourceData.computeBuffer;
+            var pointBuffer = sourceBuffer != null ? sourceBuffer : _sourceData.computeBuffer;
 
             if (_pointSize == 0)
             {

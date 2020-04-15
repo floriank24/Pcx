@@ -15,3 +15,12 @@ Desktop.ini
 
 /Extras/pcx-strip/*.o
 /Extras/pcx-strip/pcx-strip
+/.vs/pcx_git/v15
+/Assets/flo
+/obj/Debug
+/pcx_git.sln
+/Pcx.unitypackage
+/Pcx.Editor.csproj
+/Pcx.csproj
+/Assembly-CSharp.csproj
+/Assembly-CSharp-Editor.csproj

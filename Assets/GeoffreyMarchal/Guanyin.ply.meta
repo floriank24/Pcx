@@ -4,8 +4,8 @@ ScriptedImporter:
   fileIDToRecycleName:
     100000: prefab/New Game Object
     400000: prefab/New Game Object/Transform
-    11400000: prefab/New Game Object/MonoBehaviour-Pcx.PointCloudRenderer
-    11400002: data
+    11400002: prefab/New Game Object/MonoBehaviour-Pcx.PointCloudRenderer
+    11400004: data
     100100000: prefab
   externalObjects: {}
   userData: 

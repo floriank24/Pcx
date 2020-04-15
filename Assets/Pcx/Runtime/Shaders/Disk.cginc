@@ -28,6 +28,8 @@ struct Attributes
 struct Varyings
 {
     float4 position : SV_POSITION;
+    nointerpolation float4 positionCenter : TEXTCOORD0;
+    float2 position1 : TEXTCOORD1;
 #if !PCX_SHADOW_CASTER
     half3 color : COLOR;
     UNITY_FOG_COORDS(0)
@@ -58,8 +60,9 @@ Varyings Vertex(Attributes input)
 #endif
 
     // Set vertex output.
-    Varyings o;
+    Varyings o;    
     o.position = UnityObjectToClipPos(pos);
+    o.positionCenter = o.position;
 #if !PCX_SHADOW_CASTER
     o.color = col;
     UNITY_TRANSFER_FOG(o, o.position);
@@ -68,7 +71,7 @@ Varyings Vertex(Attributes input)
 }
 
 // Geometry phase
-[maxvertexcount(36)]
+/*[maxvertexcount(36)]
 void Geometry(point Varyings input[1], inout TriangleStream<Varyings> outStream)
 {
     float4 origin = input[0].position;
@@ -111,6 +114,44 @@ void Geometry(point Varyings input[1], inout TriangleStream<Varyings> outStream)
     outStream.Append(o);
 
     outStream.RestartStrip();
+}*/
+
+[maxvertexcount(4)]
+void Geometry(point Varyings input[1], inout TriangleStream<Varyings> outStream)
+{
+    float4 origin = input[0].position;
+    float2 extent = 0.5*abs(UNITY_MATRIX_P._11_22 * _PointSize * origin.w);
+
+    // Copy the basic information.
+    Varyings o = input[0];
+    o.positionCenter.xy = origin.xy;
+    o.positionCenter.zw = extent;
+
+    // Determine the number of slices based on the radius of the
+    // point on the screen.
+    o.position.zw = origin.zw;
+    
+    o.position.x = origin.x - extent.x;
+    o.position.y = origin.y + extent.y;
+    o.position1 = o.position.xy;
+    outStream.Append(o);
+
+    o.position.x = origin.x + extent.x;
+    o.position.y = origin.y + extent.y;
+    o.position1 = o.position.xy;
+    outStream.Append(o);
+
+    o.position.x = origin.x - extent.x;
+    o.position.y = origin.y - extent.y;
+    o.position1 = o.position.xy;
+    outStream.Append(o);
+    
+    o.position.x = origin.x + extent.x;
+    o.position.y = origin.y - extent.y;
+    o.position1 = o.position.xy;
+    outStream.Append(o);
+
+    outStream.RestartStrip();
 }
 
 half4 Fragment(Varyings input) : SV_Target
@@ -119,7 +160,11 @@ half4 Fragment(Varyings input) : SV_Target
     return 0;
 #else
     half4 c = half4(input.color, _Tint.a);
-    UNITY_APPLY_FOG(input.fogCoord, c);
+
+    clip( (1.-clamp(0.5*distance(input.position1, input.positionCenter.xy) / input.positionCenter.w,0.,1.)) - 0.5);
+    //c.a = 1.-smoothstep(0.5,0.6,distance(input.position1, input.positionCenter.xy)/input.positionCenter.w);
+
+    //UNITY_APPLY_FOG(input.fogCoord, c);
     return c;
 #endif
 }
